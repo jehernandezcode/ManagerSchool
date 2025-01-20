@@ -17,6 +17,7 @@ namespace SchoolManager.Controllers
         {
             _serviceCourse = serviceCourse;
         }
+        [Authorize]
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -27,7 +28,7 @@ namespace SchoolManager.Controllers
             await _serviceCourse.Add(course);
             return Created();
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<CourseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -38,7 +39,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceCourse.GetByIdAsync(id);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<CourseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -49,7 +50,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceCourse.GetCoursesAsync(filters);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -60,7 +61,7 @@ namespace SchoolManager.Controllers
             await _serviceCourse.UpdateCourse(id, course);
             return Ok();
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]

@@ -18,7 +18,7 @@ namespace SchoolManager.Controllers
         {
             _serviceGrade = serviceGrade;
         }
-
+        [Authorize]
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -29,7 +29,7 @@ namespace SchoolManager.Controllers
             await _serviceGrade.Add(grade);
             return Created();
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<GradeDto>), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -40,7 +40,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceGrade.GetByIdAsync(id);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<GradeDto>), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -51,7 +51,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceGrade.GetGradesAsync(filters);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -62,12 +62,12 @@ namespace SchoolManager.Controllers
             await _serviceGrade.UpdateGrade(id, grade);
             return Ok();
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status401Unauthorized)]
-
+        [Authorize]
         public async Task<IActionResult> DeleteGrade([FromRoute] Guid id)
         {
             await _serviceGrade.DeleteGrade(id);

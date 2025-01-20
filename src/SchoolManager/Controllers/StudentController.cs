@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Application.Student.Dtos;
 using SchoolManagement.Application.Student.Interfaces;
 using SchoolManager.Commons;
@@ -16,7 +17,7 @@ namespace SchoolManager.Controllers
         {
             _serviceStudent = serviceStudent;
         }
-
+        [Authorize]
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -27,7 +28,7 @@ namespace SchoolManager.Controllers
             await _serviceStudent.Add(student);
             return Created();
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -38,7 +39,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceStudent.GetByIdAsync(id);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<StudentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -49,7 +50,7 @@ namespace SchoolManager.Controllers
             var result = await _serviceStudent.GetStudentsAsync(filters);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
@@ -60,7 +61,7 @@ namespace SchoolManager.Controllers
             await _serviceStudent.UpdateStudent(id, student);
             return Ok();
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
