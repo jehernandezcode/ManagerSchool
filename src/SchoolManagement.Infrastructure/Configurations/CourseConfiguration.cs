@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Domain.Courses;
+using SchoolManagement.Domain.Students;
 
 namespace SchoolManagement.Infrastructure.Configurations
 {
@@ -21,6 +22,25 @@ namespace SchoolManagement.Infrastructure.Configurations
 
             builder.Property(c => c.TeacherId)
                 .IsRequired(false);
+
+
+            builder.HasData(
+             new Course
+             {
+                 Id = Guid.NewGuid(),
+                 Title = "matematicas",
+                 CreatedAt = DateTime.UtcNow,
+             },
+             new Course
+             {
+                 Id = Guid.NewGuid(),
+                 Title= "Informatica",
+                 CreatedAt = DateTime.UtcNow,
+             }
+ );
+
         }
+
+
     }
 }

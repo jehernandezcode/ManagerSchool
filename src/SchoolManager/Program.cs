@@ -15,8 +15,75 @@ using SchoolManagement.Application.Teacher.Interfaces;
 using SchoolManagement.Application.Teacher.Services;
 using SchoolManagement.Domain.Interfaces;
 using SchoolManagement.Infrastructure.Persistence.Repositories;
+using Microsoft.OpenApi.Models;
+using SchoolManagement.Domain.Common;
+using Microsoft.AspNetCore.Authentication;
+using SchoolManagement.Infrastructure.Authentication;
+using SchoolManagement.Application.Authentication.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using SchoolManagement.Application.Authentication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Manager School", Version = "v1" });
+    c.EnableAnnotations();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+var SecretKey = builder.Configuration.GetValue<string>("Jwt:SecretKey") ?? "";
+var Issuer = builder.Configuration.GetValue<string>("Jwt:Issuer") ?? "";
+var Audience = builder.Configuration.GetValue<string>("Jwt:Audience") ?? "";
+decimal expireAt = builder.Configuration.GetValue<decimal>("Jwt:ExpirationMinutes");
+
+builder.Services.AddScoped<IAuthenticationServiceInfra, AuthentificationServiceInfra>(sp =>
+{
+    return new AuthentificationServiceInfra(
+       Audience, Issuer, SecretKey, expireAt
+    );
+});
+builder.Services.AddScoped<IAutheticationService, SchoolManagement.Application.Authentication.Services.AuthenticationService>();
+
+// Agregar JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = Issuer,
+            ValidAudience = Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey))
+        };
+    });
 
 // Add services to the container.
 builder.Services.AddScoped<IServiceTeacher, ServiceTeacher>();
@@ -30,7 +97,6 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IGradeRepository, GradeRepository>();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-
 
 // Configuración del DbContext con SQL Server
 var connectionString = builder.Configuration.GetConnectionString("Database");
@@ -67,7 +133,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
