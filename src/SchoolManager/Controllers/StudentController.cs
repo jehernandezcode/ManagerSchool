@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Application.Student.Dtos;
 using SchoolManagement.Application.Student.Interfaces;
 using SchoolManager.Commons;
@@ -34,7 +33,7 @@ namespace SchoolManager.Controllers
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status401Unauthorized)]
 
-        public async Task<IActionResult> GetStudentById([FromRoute] Guid id)
+        public async Task<IActionResult> GetStudentById([FromRoute] string id)
         {
             var result = await _serviceStudent.GetByIdAsync(id);
             return Ok(result);
@@ -56,7 +55,7 @@ namespace SchoolManager.Controllers
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status401Unauthorized)]
 
-        public async Task<IActionResult> UpdateStudent([FromRoute] Guid id, [FromBody] UpdateStudentDto student)
+        public async Task<IActionResult> UpdateStudent([FromRoute] string id, [FromBody] UpdateStudentDto student)
         {
             await _serviceStudent.UpdateStudent(id, student);
             return Ok();
@@ -67,7 +66,7 @@ namespace SchoolManager.Controllers
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status400BadRequest)]
         [ProducesResponseType((typeof(ApiResponse)), StatusCodes.Status401Unauthorized)]
 
-        public async Task<IActionResult> DeleteStudent([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteStudent([FromRoute] string id)
         {
             await _serviceStudent.DeleteStudent(id);
             return Ok();

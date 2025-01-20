@@ -21,13 +21,13 @@ namespace SchoolManagement.Application.Student.Services
 
         public async Task Add(CreateStudentDto student)
         {
-            var newStudent = new Domain.Students.Student { Id = Guid.NewGuid(), FirsName= student.FirsName, LastName=student.LastName };
+            var newStudent = new Domain.Students.Student { Id = Guid.NewGuid(), Identification= student.Identification, FirsName= student.FirsName, LastName=student.LastName };
             await _studentRepository.AddAsync(newStudent);
         }
 
-        public async Task DeleteStudent(Guid id)
+        public async Task DeleteStudent(string id)
         {
-            var student = await _studentRepository.GetByIdAsync(id);
+            var student = await _studentRepository.GetStudentByIdentifiAsync(id);
 
             if (student != null)
             {
@@ -37,9 +37,9 @@ namespace SchoolManagement.Application.Student.Services
             await _studentRepository.DeleteAsync(student);
         }
 
-        public async Task<StudentDto?> GetByIdAsync(Guid id)
+        public async Task<StudentDto?> GetByIdAsync(string id)
         {
-            var student = await _studentRepository.GetByIdAsync(id);
+            var student = await _studentRepository.GetStudentByIdentifiAsync(id);
 
             if (student == null)
             {
@@ -57,7 +57,8 @@ namespace SchoolManagement.Application.Student.Services
             {
                 filter = student =>
                 (string.IsNullOrEmpty(filters.FirsName) || student.FirsName.ToLower() == filters.FirsName.ToLower()) &&
-                (string.IsNullOrEmpty(filters.LastName) || student.LastName.ToLower() == filters.LastName.ToLower());
+                (string.IsNullOrEmpty(filters.LastName) || student.LastName.ToLower() == filters.LastName.ToLower()) &&
+                (string.IsNullOrEmpty(filters.Identification) || student.Identification.ToLower() == filters.Identification.ToLower());
             }
 
             var students = await _studentRepository.GetAllAsync(filter);
@@ -65,10 +66,15 @@ namespace SchoolManagement.Application.Student.Services
             return _mapper.Map<IEnumerable<StudentDto>>(students);
         }
 
-        public async Task UpdateStudent(Guid id, UpdateStudentDto updateStudentDto)
+        public async Task UpdateStudent(string id, UpdateStudentDto updateStudentDto)
         {
 
             var patchDocument = new JsonPatchDocument<Domain.Students.Student>();
+
+            if (updateStudentDto.Identification != null)
+            {
+                patchDocument.Replace(data => data.Identification, updateStudentDto.Identification);
+            }
 
             if (updateStudentDto.FirsName != null)
             {
@@ -80,7 +86,7 @@ namespace SchoolManagement.Application.Student.Services
                 patchDocument.Replace(data => data.LastName, updateStudentDto.LastName);
             }
 
-            var student = await _studentRepository.GetByIdAsync(id) ?? throw new NotFoundException("student not found");
+            var student = await _studentRepository.GetStudentByIdentifiAsync(id) ?? throw new NotFoundException("student not found");
 
             patchDocument.ApplyTo(student);
 
