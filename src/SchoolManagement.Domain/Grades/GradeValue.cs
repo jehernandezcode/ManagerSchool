@@ -31,5 +31,10 @@ namespace SchoolManagement.Domain.Grades
         {
             return Value.ToString("F1");
         }
+
+        public GradeValue()
+        {
+            
+        }
     }
 }
