@@ -27,13 +27,7 @@ namespace SchoolManagement.Application.Student.Services
 
         public async Task DeleteStudent(string id)
         {
-            var student = await _studentRepository.GetStudentByIdentifiAsync(id);
-
-            if (student != null)
-            {
-                throw new NotFoundException("student not found");
-            }
-
+            var student = await _studentRepository.GetStudentByIdentifiAsync(id) ?? throw new NotFoundException("student not found");
             await _studentRepository.DeleteAsync(student);
         }
 
