@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagement.Application.Exceptions;
 using SchoolManagement.Domain.Common;
 using SchoolManager.Commons;
+using SchoolManagement.Application.Exceptions;
 using ManagerSchool.Exceptions;
 
 namespace SchoolManager.Filters
